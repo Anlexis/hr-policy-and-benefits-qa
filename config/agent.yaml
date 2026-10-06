@@ -1,0 +1,23 @@
+# Agent manifest — the registration entry point.
+# The platform registry reads every key below at ROOT level; the file is flat
+# and carries no `agent:` block. Runtime parameters live in config/config.yaml.
+id: "SVC-C2-001"
+name: "HR Policy & Benefits Q&A"
+namespace: "svc"
+version: "0.1.0"
+enabled: true
+category: "Cat 2"
+generation_mode: "deterministic"  # deterministic | llm
+industry: "SVC"
+
+base_type: "RAGAgent"
+
+# Entry point — single dotted import path (module.Class), NOT split module:/class:.
+class: "src.graph.graph.HRPolicyBenefitsQAAgent"
+
+required_trust_level: "VERIFIED_EXTERNAL"
+
+# Compile-time gates — declare every ctx.secrets.require() key + constructed extra.
+requires:
+  secrets: []
+  extras: []

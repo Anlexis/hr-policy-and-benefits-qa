@@ -1,0 +1,41 @@
+# Runtime parameters — loaded by the platform registry and passed to the graph
+# constructor as Graph(config=...). Separate from config/agent.yaml, which is
+# the static registration manifest and carries no runtime values.
+#
+# Every value below is validated for type, finiteness and range when the graph
+# is built; an invalid or absent key is not forwarded and the consuming node
+# keeps its own default.
+
+max_retry: 3
+timeout_s: 30
+
+# Answer generation. The shipped implementation is deterministic grounded
+# synthesis and invokes no model, so these settings apply only to a deployment
+# that swaps in a constrained model rendering prompts/svc_qa.j2.
+llm:
+  system_prompt_template: "prompts/svc_qa.j2"
+  temperature: 0.1
+  max_tokens: 2000
+
+# Retrieval over the HR-policy corpus. Seeded into the inner pipeline's state,
+# where the retrieve and rerank nodes read it, so these values really drive
+# retrieval rather than only documenting it.
+retrieval:
+  collection: "svc_hr_policy_and_benefi_kb"
+  top_k: 5
+  score_threshold: 0.70
+  hybrid_search: false
+
+# Caller-data bounds and the entitlement grading rules.
+#   max_entitlement_records  entry cap enforced by the input contract
+#   statutory_trigger_days   entitlement size at which the uptake rule applies
+#   statutory_minimum_days   days that must be taken within the year
+#   carryover_cap_days       untaken balance above which the excess expires
+qa:
+  max_entitlement_records: 20
+  statutory_trigger_days: 10
+  statutory_minimum_days: 5
+  carryover_cap_days: 40
+
+security:
+  s3_gate_enabled: true
